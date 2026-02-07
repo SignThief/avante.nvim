@@ -964,7 +964,8 @@ function M._stream_acp(opts)
     })
     last_tool_call_message = message
     message.acp_tool_call = update
-    if update.status == "pending" or update.status == "in_progress" then message.is_calling = true end
+    local status = update.status or "pending"
+    if status == "pending" or status == "in_progress" then message.is_calling = true end
     tool_call_messages[update.toolCallId] = message
     if update.rawInput then
       local description = update.rawInput.description
