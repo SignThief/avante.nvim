@@ -1549,6 +1549,22 @@ function M._continue_stream_acp(opts, acp_client, session_id)
           .. " recent user messages</system_context>",
       })
     end
+    -- If no history was added, use generate_prompts for the current request
+    if user_messages_added == 0 and not donot_use_builtin_system_prompt then
+      local prompt_opts = M.generate_prompts(opts)
+      table.insert(prompt, {
+        type = "text",
+        text = prompt_opts.system_prompt,
+      })
+      for _, message in ipairs(prompt_opts.messages) do
+        if message.role == "user" then
+          table.insert(prompt, {
+            type = "text",
+            text = message.content,
+          })
+        end
+      end
+    end
   else
     if donot_use_builtin_system_prompt then
       -- Include all user messages for better context preservation
